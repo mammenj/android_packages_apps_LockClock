@@ -16,6 +16,10 @@
 
 package com.cyanogenmod.lockclock;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Set;
+
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
@@ -23,6 +27,9 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -36,6 +43,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.cyanogenmod.jsm.cmclockmod.R;
 import com.cyanogenmod.lockclock.misc.CalendarInfo;
 import com.cyanogenmod.lockclock.misc.CalendarInfo.EventInfo;
 import com.cyanogenmod.lockclock.misc.Constants;
@@ -43,10 +51,6 @@ import com.cyanogenmod.lockclock.misc.Preferences;
 import com.cyanogenmod.lockclock.misc.WidgetUtils;
 import com.cyanogenmod.lockclock.weather.WeatherInfo;
 import com.cyanogenmod.lockclock.weather.WeatherUpdateService;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
 
 public class ClockWidgetService extends IntentService {
     private static final String TAG = "ClockWidgetService";
@@ -169,10 +173,62 @@ public class ClockWidgetService extends IntentService {
         refreshDateAlarmFont(clockViews);
 
         // Register an onClickListener on Clock, starting DeskClock
-        ComponentName clk = new ComponentName("com.android.deskclock", "com.android.deskclock.DeskClock");
-        Intent i = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER).setComponent(clk);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        clockViews.setOnClickPendingIntent(R.id.clock_panel, pi);
+        //ComponentName clk = new ComponentName("com.android.deskclock", "com.android.deskclock.DeskClock");
+        //Intent i = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER).setComponent(clk);
+        //Intent i = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_APP_CALENDAR);
+        
+        /////////////////////////
+        PackageManager packageManager = this.getPackageManager();
+        Intent alarmClockIntent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
+
+        // Verify clock implementation
+        String clockImpls[][] = {
+                {"HTC Alarm Clock", "com.htc.android.worldclock", "com.htc.android.worldclock.WorldClockTabControl" },
+                {"Standar Alarm Clock2", "com.google.android.deskclock", "com.android.deskclock.AlarmClock"},
+                {"Standar Alarm Clock", "com.android.deskclock", "com.android.deskclock.AlarmClock"},
+                {"Froyo Nexus Alarm Clock", "com.google.android.deskclock", "com.android.deskclock.DeskClock"},
+                {"Moto Blur Alarm Clock", "com.motorola.blur.alarmclock",  "com.motorola.blur.alarmclock.AlarmClock"},
+                { "Sony Ericsson", "com.sonyericsson.alarm", "com.sonyericsson.alarm.Alarm" },
+                {"Samsung Galaxy Clock", "com.sec.android.app.clockpackage","com.sec.android.app.clockpackage.ClockPackage"}
+        };
+
+        boolean foundClockImpl = false;
+
+        for(int i=0; i<clockImpls.length; i++) {
+            String vendor = clockImpls[i][0];
+            String packageName = clockImpls[i][1];
+            String className = clockImpls[i][2];
+            try {
+                ComponentName cn = new ComponentName(packageName, className);
+                ActivityInfo aInfo = packageManager.getActivityInfo(cn, PackageManager.GET_META_DATA);
+                
+                alarmClockIntent.setComponent(cn);
+
+                
+                foundClockImpl = true;
+                if (D) Log.d(TAG, " Looping "+vendor + " --> "+ "i :"+ i +" " + packageName + "/" + className);
+                break;
+            } catch (NameNotFoundException e) {
+                if (D) Log.d(TAG, "Found " + vendor + " does not exists");
+            }
+        }
+
+        if (foundClockImpl) {
+            PendingIntent pi = PendingIntent.getActivity(this, 0, alarmClockIntent, 0);
+            if (D) Log.d(TAG, "Launching " + alarmClockIntent + " !!!!");
+            //PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+            clockViews.setOnClickPendingIntent(R.id.clock_panel, pi);
+
+        }
+        
+        
+        
+        
+        
+        ///////////////////////////////
+        
+        
+
     }
 
     private void refreshClockFont(RemoteViews clockViews) {
