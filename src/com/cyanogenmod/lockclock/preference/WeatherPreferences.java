@@ -42,7 +42,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.cyanogenmod.lockclock.ClockWidgetProvider;
-import com.cyanogenmod.lockclock.R;
+import com.cyanogenmod.jsm.cmclockmod.R;
 import com.cyanogenmod.lockclock.misc.Constants;
 import com.cyanogenmod.lockclock.misc.Preferences;
 import com.cyanogenmod.lockclock.weather.WeatherUpdateService;

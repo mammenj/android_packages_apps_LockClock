@@ -19,7 +19,7 @@ package com.cyanogenmod.lockclock.weather;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.cyanogenmod.lockclock.R;
+import com.cyanogenmod.jsm.cmclockmod.R;
 import com.cyanogenmod.lockclock.misc.Preferences;
 
 import java.text.DecimalFormat;

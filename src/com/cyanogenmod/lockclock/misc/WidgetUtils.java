@@ -23,7 +23,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.TypedValue;
 
-import com.cyanogenmod.lockclock.R;
+import com.cyanogenmod.jsm.cmclockmod.R;
 
 public class WidgetUtils {
     //===============================================================================================
