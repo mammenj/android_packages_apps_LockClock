@@ -237,6 +237,7 @@ public class WeatherPreferences extends PreferenceFragment implements
                     public void onClick(DialogInterface dialog, int whichButton) {
                         Settings.Secure.setLocationProviderEnabled(mResolver,
                                 LocationManager.NETWORK_PROVIDER, true);
+
                     }
                 });
         builder.setNegativeButton(R.string.cancel, null);
