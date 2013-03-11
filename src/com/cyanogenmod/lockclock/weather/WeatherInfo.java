@@ -106,15 +106,15 @@ public class WeatherInfo {
     }
 
     public String getFormattedTemperature() {
-        return getFormattedValue(temperature, "°" + tempUnit);
+        return getFormattedValue(temperature, "Â°" + tempUnit);
     }
 
     public String getFormattedLow() {
-        return getFormattedValue(lowTemperature, "°");
+        return getFormattedValue(lowTemperature, "Â°");
     }
 
     public String getFormattedHigh() {
-        return getFormattedValue(highTemperature, "°");
+        return getFormattedValue(highTemperature, "Â°");
     }
 
     public String getFormattedHumidity() {
